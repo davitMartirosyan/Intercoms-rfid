@@ -16,9 +16,9 @@
 #define PASS "@Alkatras1998"
 #define DB "users"
 
-typedef sql::Connection SqlConnect;
-typedef sql::Driver     Drive;
-typedef sql::ResultSet  QueryResult;
+// typedef sql::Connection SqlConnect;
+// typedef sql::Driver     Drive;
+// typedef sql::ResultSet  QueryResult;
 
 std::vector<int> inter_id;
 std::vector<long long> rf_id;

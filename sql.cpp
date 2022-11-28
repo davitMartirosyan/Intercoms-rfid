@@ -1,43 +1,34 @@
 #include "includes/connections.h"
 
-QueryResult *querySelect(SqlConnect *con, const char *query);
-SqlConnect *setConnection(Drive *driver);
+typedef struct crc{
+    uint32_t start; // 287454020
+    char   imei[15]; // 352806846270704
+    uint8_t sum;
+}crc;
+
+uint8_t Sum(char message[], int nBytes)
+{
+    uint8_t sum = 0;
+
+    while(nBytes-- > 0)
+    {
+        sum += *(message++);
+    }
+
+    return (sum);
+}
 
 int main(int argc, const char **argv)
 {
-    try
-    {
-        Drive *driver = get_driver_instance();
-        SqlConnect *con = setConnection(driver);
-        QueryResult *query = querySelect(con, "SELECT * FROM users");
-        while(query->next())
-        {
-            std::cout << query->getString("fname") << " "
-                << query->getString("lname") << std::endl;
-        }
-    }
-    catch(sql::SQLException &e)
-    {
-        std::cout << "# ERR: SQLException in " << __FILE__;
-        std::cout << "(" << __FUNCTION__ << ") on Line " << __LINE__ << std::endl;
-        std::cout << "# ERR: " << e.what();
-        std::cout << " (MySQL error code: " << e.getErrorCode();
-        std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
-        return EXIT_FAILURE;
-    }
+    crc *r;
+    const char *imei = "352806846270704";
+    int i;
+
+    i = -1;
+    r = (crc*)malloc(sizeof(crc));
+    r->start = 0x11223344;
+    while(imei[++i])
+        r->imei[i] = imei[i];
+    printf("%d\n", r->imei[0]); // 3 -> ASCII -> 51 -> binary -> 
     return EXIT_SUCCESS;
-}
-
-SqlConnect *setConnection(Drive *driver)
-{
-    SqlConnect *con = driver->connect(HOST, USER, PASS);
-    con->setSchema(DB);
-    return (con);
-}
-
-QueryResult *querySelect(SqlConnect *con, const char *query)
-{
-    sql::Statement *stmt = con->createStatement();
-    QueryResult *res = stmt->executeQuery(query);
-    return (res);
 }
